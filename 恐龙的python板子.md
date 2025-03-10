@@ -414,21 +414,20 @@ from queue import Queue   # 队列，FIFO
 from queue import PriorityQueue  #优先级队列，优先级高的先输出
 
 ###############队列（Queue）的使用###############
-q = Queue(maxsize) 	#构建一个队列对象，maxsize初始化默认为零，此时队列无穷大
-q.empty()		#判断队列是否为空(取数据之前要判断一下)
-q.full()		#判断队列是否满了
-q.put()			#向队列存放数据
-q.get()			#从队列取数据
-q.qsize()		#获取队列大小，
+q = Queue(maxsize)     #构建一个队列对象，maxsize初始化默认为零，此时队列无穷大
+q.empty()        #判断队列是否为空(取数据之前要判断一下)
+q.full()        #判断队列是否满了
+q.put()            #向队列存放数据
+q.get()            #从队列取数据
+q.qsize()        #获取队列大小，
 
 ###用法示例：
->>> q = Queue(3)
->>> for i in range(3):
->>>	q.put(i)
+>>> q = Queue(3)>>> for i in range(3):
+>>>    q.put(i)
 >>> q.full()
 True
 >>> while not q.empty():
->>> 	print(q.get())
+>>>     print(q.get())
 0
 1
 2
@@ -447,12 +446,29 @@ True
 
 >>> i = 0
 >>> while i < q.qsize()：
->>> 	print(q.get())
+>>>     print(q.get())
 (0，"Tom")
 (1，"Lucy")
 (2，"Lisa")
 
-
+#如果我们需要根据自定义的规则进行排序，可以通过重载类的 __lt__ 方法来实现。
+import queue
+class person(object):
+    def __init__(self,name,score):
+        self.name = name
+        self.score = score
+    def __lt__(self, other):
+        return self.score > other.score
+p1 = person("张三",15)
+p2 = person("李四",23)
+p3 = person("王五",12)
+p4 = person("朱五",32)
+que = queue.PriorityQueue()
+que.put(p1)
+que.put(p2)
+que.put(p4)
+que.put(p3)
+print(que.get().name)
 ```
 
 ## bisect
@@ -649,5 +665,3 @@ def binary_search(arr, target):
     return -1
 新手易踩坑：在使用二分查找时，确保数据是有序的，否则结果将不可靠。
 ```
-
-
