@@ -100,6 +100,133 @@ Python **math** 模块提供了许多对浮点数的数学运算函数。**mat
 | [math.tanh(x)](https://www.runoob.com/python3/ref-math-tanh.html)              | 返回 x 的双曲正切值。                                                                                                   |
 | [math.trunc(x)](https://www.runoob.com/python3/ref-math-trunc.html)            | 返回 x 截断整数的部分，即返回整数部分，删除小数部分                                                                                    |
 
+## re
+
+#### 1. 字符匹配
+
+| 模式   | 描述                 | 示例       |
+| ---- | ------------------ | -------- |
+| 普通字符 | 精确匹配               | `python` |
+| `.`  | 匹配任意单个字符           | `p.th.n` |
+| `\d` | 数字（等价[0-9]）        | `\d{3}`  |
+| `\D` | 非数字                | `\D+`    |
+| `\w` | 单词字符（[a-zA-Z0-9_]） | `\w{4,}` |
+| `\W` | 非单词字符              | `\W`     |
+| `\s` | 空白字符（空格、换行等）       | `\s+`    |
+| `\S` | 非空白字符              | `\S`     |
+
+#### 2. 量词与重复
+
+| 量词      | 描述    | 示例                            |
+| ------- | ----- | ----------------------------- |
+| `*`     | 0次或多次 | `a*b` → "b", "aaab"           |
+| `+`     | 1次或多次 | `a+b` → "ab", "aaab"          |
+| `?`     | 0次或1次 | `colou?r` → "color", "colour" |
+| `{n}`   | 精确n次  | `\d{4}` → 4位数字                |
+| `{n,}`  | 至少n次  | `\w{3,}` → 至少3个字符             |
+| `{n,m}` | n到m次  | `a{2,4}` → "aa", "aaaa"       |
+| `\|`    | 分支条件  | `cat\|rat`→"cat","rat"        |
+
+#### 3. 字符集合
+
+```regex
+[aeiou]    # 匹配任意元音
+[^0-9]     # 非数字字符
+[a-zA-Z]   # 所有字母
+[0-9a-fA-F] # 十六进制字符
+```
+
+#### 4. 定位符
+
+| 符号   | 描述    | 示例         |
+| ---- | ----- | ---------- |
+| `^`  | 字符串开始 | `^Start`   |
+| `$`  | 字符串结束 | `end$`     |
+| `\b` | 单词边界  | `\bword\b` |
+| `\B` | 非单词边界 | `\Bword\B` |
+
+#### 标志
+
+1. 忽略大小写：`re.I`
+
+2. 多行模式：`re.M`  
+
+| 方法(pattern, string, flags=0)                      | 描述                          |
+| ------------------------------------------------- | --------------------------- |
+| `re.match()`                                      | 从字符串起始位置匹配                  |
+| `re.search()`                                     | 扫描整个字符串查找匹配                 |
+| `re.findall()`                                    | 返回所有匹配的列表                   |
+| `re.finditer()`                                   | 返回匹配迭代器                     |
+| `re.sub(pattern, repl, string, count=0, flags=0)` | 替换匹配内容(repl：用于替换的字符串),返回字符串 |
+| `re.split(pattern, string, maxsplit=0, flags=0)`  | 按模式分割字符串,返回列表               |
+
+#### Match对象
+
+Match 对象通常由 `re.match()`, `re.search()`, `re.finditer()`等函数返回
+
+**属性**:
+
+* **string**：原始输入字符串
+  
+  ```python
+  match = re.match(r"(\d+)-(\d+)", "123-456-234")
+  print(match.group()) # 输出：123-456
+  print(match.string) # 输出：123-456-234
+  ```
+
+* **pos**：匹配的起始位置（相对于原字符串的偏移量）
+  
+  ```py
+  print(match.pos) # 输出：0
+  ```
+
+* **endpos**：匹配的结束位置（相对于原字符串的偏移量），结束是指最后一个匹配字符的后一位
+  
+  ```python
+  print(match.endpos) # 输出：11
+  ```
+
+**方法**：
+
+* **group([group1, …])**： 返回匹配的子字符串或多个子字符串，如果没有指定参数，返回整个匹配内容，如果指定了参数，返回指定组的内容
+  
+      match = re.match(r"(\d+)-(\d+)", "123-456")  
+      # 不使用分组也能输出
+      print(match.group()) # 输出: '123-456'
+      # 使用分组后才能输出，否则会报错
+      print(match.group(2)) # 输出: '456'
+
+* **start([group])**：返回匹配的起始位置，如果指定了组号，返回该组匹配的起始位置
+  
+  ```python
+  match = re.match(r"(\d+)-(\d+)", "abc-123-456")
+  print(match.start(1)) # 输出: 0 (组 1 匹配的开始位置)
+  ```
+
+* **end([group])**：回匹配的结束位置，如果指定了组号，返回该组匹配的结束位置，结束是指最后一个匹配字符的后一位
+  
+  ```python
+  match = re.match(r"(\d+)-(\d+)", "123-456")
+  print(match.end(1))  # 输出: 3 (组 1 匹配的结束位置)
+  print(match.end()) # 输出：7
+  ```
+
+* **span([group])**：返回匹配的`(start, end)`位置元组，表示匹配的起始和结束位置，结束是指最后一个匹配字符的后一位
+  
+  ```python
+  match = re.match(r"(\d+)-(\d+)", "123-456")
+  print(match.span(2)) # 输出: (4, 7)
+  ```
+
+* **groupdict(default=None)**：返回一个字典，其中键为命名的分组名，值为分组匹配到的内容，如果某个命名分组没有匹配内容，则返回 `default` 参数的值
+  
+  ```python
+  text = "2024-12-23"
+  pattern = r"(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})-?(?P<time>\d{2}:\d{2})?"
+  match = re.match(pattern, text)
+  print(match.groupdict(default="N/A")) # 输出: {'year': '2024', 'month': '12', 'day': '23', 'time': 'N/A'}
+  ```
+
 ## calendar
 
 此模块的函数都是日历相关的，例如打印某月的字符月历。
